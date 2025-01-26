@@ -2,6 +2,7 @@ library(shiny)
 library(shinydashboard)
 library(shinyWidgets)
 library(DT)
+library(plotly)
 
 ipf <- read.csv("~/powerlifting_stats/ipf.csv")
 
@@ -40,21 +41,25 @@ dashboardPage(
     pickerInput("Ageclass", label = "Choose an age class:",
                 choices =  list("None Selected" = "", 
                                  "AgeClass" = sort(unique(ipf$AgeClass))))
-    
-    # pickerInput("Equipment", label = "Choose an equipment category:",
-    #             choices = list("None Selected" = "", 
-    #                            "Equipment" = setNames(c("Raw", "Single-ply", "Wraps"), 
-    #                                                   c("Raw: Bare knees or knee sleeves.", 
-    #                                                     "Single-ply: Equipped, single-ply suits.", 
-    #                                                     "Wraps: Knee wraps were allowed."))))
     ),
   
   dashboardBody(
     fluidRow(
       box(
-        title = "Summary Table", width = 12,
-        dataTableOutput("summary")
+        title = "Summary Table - Best Total", width = 6,
+        dataTableOutput("summary")),
+        box(
+          title = "Summary Table - Best GL Score", width = 6,
+          dataTableOutput("summary2")
+    )
+  ),
+  fluidRow(
+    box(
+      title = "Weight Class Distribution", width = 6,
+      plotlyOutput("weightclass_dist")),
+    box(
+      title = "Age Class Distribution", width = 6,
+      plotlyOutput("ageclass_dist"))
+    )
     )
   )
-)
-)
