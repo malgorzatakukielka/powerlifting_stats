@@ -13,7 +13,7 @@ ipf <- ipf %>%
 ipf$AgeClass <- fct_recode(ipf$AgeClass, "80+" = "80-999")
 
 ipf <- ipf %>%
-  filter(!is.na(BodyweightKg), !is.na(Sex), AgeClass != "", AgeClass != "5-12", Equipment == "Raw")
+  filter(!is.na(BodyweightKg), !is.na(Sex), AgeClass != "", AgeClass != "5-12", Equipment == "Raw", Event == "SBD")
 
 ipf <- ipf %>%
   mutate(WeightClass = case_when(
