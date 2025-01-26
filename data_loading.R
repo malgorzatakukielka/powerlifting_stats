@@ -8,12 +8,12 @@ ipf$AgeClass <- factor(ipf$AgeClass)
 ipf$WeightClassKg <- factor(ipf$WeightClassKg)
 
 ipf <- ipf %>% 
-  select(-Division, -Squat4Kg, -Bench4Kg, -Deadlift4Kg)
+  select(-Division, -Squat4Kg, -Bench4Kg, -Deadlift4Kg, -BirthYearClass)
 
 ipf$AgeClass <- fct_recode(ipf$AgeClass, "80+" = "80-999")
 
 ipf <- ipf %>%
-  filter(!is.na(BodyweightKg), !is.na(Sex), AgeClass != "", AgeClass != "5-12")
+  filter(!is.na(BodyweightKg), !is.na(Sex), AgeClass != "", AgeClass != "5-12", Equipment == "Raw")
 
 ipf <- ipf %>%
   mutate(WeightClass = case_when(
@@ -46,3 +46,5 @@ ipf <- ipf %>%
   relocate(WeightClass, .before = WeightClassKg)
 
 ipf$WeightClass <- factor(ipf$WeightClass)
+
+write.csv(ipf, "~/powerlifting_stats/ipf.csv", row.names = T)
