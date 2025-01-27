@@ -2,7 +2,7 @@ library(shiny)
 
 # Define server logic required to draw a histogram
 function(input, output, session) {
-  
+## First window ##
 observeEvent(input$sex, {
   #pull weightclasses depending on a gender
   weightclass_filtered <- ipf %>% 
@@ -160,6 +160,106 @@ observeEvent(input$sex, {
     # to plotly
     ggplotly(plot2)
     
+  })
+  
+  ## Second Window ##
+  
+  sbd_data <- reactive({
+    ipf %>% 
+      select(Sex, WeightClass, AgeClass, Best3SquatKg, Best3BenchKg, Best3DeadliftKg, TotalKg) %>% 
+      na.omit() %>% 
+      pivot_longer(cols = c("Best3SquatKg", "Best3BenchKg", "Best3DeadliftKg", "TotalKg"), 
+                   names_to = "lift", values_to = "kgs")
+  })
+  
+  output$boxplots <- renderPlotly({
+    sbd_data_val <- sbd_data()
+    # Filter based on input and lift other than total
+    filtered_data <- sbd_data_val %>% 
+      filter(
+        input$sex == "" | Sex == input$sex,
+        input$weightclass == "" | WeightClass == input$weightclass,
+        input$Ageclass == "" | AgeClass == input$Ageclass,
+        lift != "TotalKg"
+      )
+    
+    # dynamic title
+    title_text <- paste(
+      "Best Attempt Distribution by Lift Type for", input$sex, "athletes",
+      if (input$weightclass != "") paste("in Weight Class:", input$weightclass) else "in all Weight Classes",
+      if (input$Ageclass != "") paste("and Age Class:", input$Ageclass) else "in all Age Classes"
+    )
+    
+    # plot
+    boxplot1 <- filtered_data %>% 
+      ggplot(aes(x = factor(lift, levels = c("Best3SquatKg", "Best3BenchKg", "Best3DeadliftKg")), y = kgs)) +
+      geom_boxplot(fill = "steelblue", color = "black", outlier.shape = 16, outlier.size = 3) + 
+      theme_bw() + 
+      labs(
+        x = "Lift Type", 
+        y = "Weight (kg)", 
+        title = title_text  # dynamic title 
+      ) + 
+      scale_x_discrete(labels = c(
+        "Best3SquatKg" = "Squat", 
+        "Best3BenchKg" = "Bench", 
+        "Best3DeadliftKg" = "Deadlift"
+      ))
+    
+    # to plotly
+    ggplotly(boxplot1) %>% 
+      layout(
+        title = list(
+          text = title_text,
+          font = list(size = 16)
+        )
+      )
+  })
+  
+  output$boxplot2 <- renderPlotly({
+    sbd_data_val <- sbd_data()
+
+    # Filter based on input and lift other than total
+    filtered_data <- sbd_data_val %>% 
+      filter(
+        input$sex == "" | Sex == input$sex,
+        input$weightclass == "" | WeightClass == input$weightclass,
+        input$Ageclass == "" | AgeClass == input$Ageclass,
+        lift == "TotalKg"
+      )
+    
+    # dynamic title
+    title_text <- paste(
+      "Total Distribution for", input$sex, "athletes\n",
+      if (input$weightclass != "") paste("in Weight Class:", input$weightclass) else "in all Weight Classes",
+      if (input$Ageclass != "") paste("and Age Class:", input$Ageclass) else "in all Age Classes"
+    )
+    
+    # plot
+    boxplot2 <- filtered_data %>% 
+      ggplot(aes(x = lift, y = kgs)) +
+      geom_boxplot(fill = "steelblue", color = "black", outlier.shape = 16, outlier.size = 3) + 
+      theme_bw() + 
+      labs(
+        x = "Lift Type", 
+        y = "Weight (kg)", 
+        title = title_text  # dynamic title 
+      ) + 
+      scale_x_discrete(labels = c(
+        "TotalKg" = "Total"
+      ))
+    
+    # to plotly
+    ggplotly(boxplot2) %>%
+      layout(
+        title = list(
+          text = title_text,
+          y = 0.97,
+          yanchor = "top",
+          font = list(size = 16)
+        )
+      )
+      
   })
 
 }

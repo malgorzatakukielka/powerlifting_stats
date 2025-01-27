@@ -32,8 +32,12 @@ dashboardPage(
   dashboardHeader(title = "Powerlifting Statistics", titleWidth = 300),
   dashboardSidebar(width = 300,
                    sidebarMenu(
+                  # Navigation Section Header
+                   h4("Navigation"),
                    menuItem("Athletes statistics", tabName = "athletes", icon = icon("medal")),
-                   menuItem("Second Page", tabName = "second_page", icon = icon("file"))),               
+                   menuItem("Performance Analysis", tabName = "performance_analysis", icon = icon("dumbbell"))),
+    # Selection Section Header
+    h4("Selection"),
 
     radioButtons("sex", label = "Choose a gender:",
                  choices = unique(ipf$Sex),
@@ -48,6 +52,10 @@ dashboardPage(
     ),
   
   dashboardBody(
+    tags$head(
+      tags$link(rel = "stylesheet", type = "text/css", href = "style.css")
+    ),
+    ## First window ##
     tabItems(
       tabItem(
         tabName = "athletes",
@@ -69,14 +77,24 @@ dashboardPage(
       plotlyOutput("ageclass_dist"))
     )
     ),
+  
+  ## Second Window ##
   tabItem(
-    tabName = "second_page",
+    tabName = "performance_analysis",
     fluidRow(
       box(
-        title = "Second Page", 
-        status = "info", 
-        width = 12,
-        "This is the second page. Content will be added here later.")))
+        title = "Title - TBC",
+        width = 8, height = "600px",
+        plotlyOutput("boxplots",
+                     height = "550px")
+        ),
+      box(
+        title = "Title - TBC",
+        width = 4, height = "600px",
+        plotlyOutput("boxplot2",
+                     height = "550px")
+      )
+      ))
   )
   )
 )
