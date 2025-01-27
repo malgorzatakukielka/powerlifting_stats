@@ -31,6 +31,10 @@ sorted_weight_class <- sort(unique(ipf$WeightClass),
 dashboardPage(
   dashboardHeader(title = "Powerlifting Statistics", titleWidth = 300),
   dashboardSidebar(width = 300,
+                   sidebarMenu(
+                   menuItem("Athletes statistics", tabName = "athletes", icon = icon("medal")),
+                   menuItem("Second Page", tabName = "second_page", icon = icon("file"))),               
+
     radioButtons("sex", label = "Choose a gender:",
                  choices = unique(ipf$Sex),
                  selected = unique(ipf$Sex)[1]),
@@ -44,6 +48,9 @@ dashboardPage(
     ),
   
   dashboardBody(
+    tabItems(
+      tabItem(
+        tabName = "athletes",
     fluidRow(
       box(
         title = "Summary Table - Best Total", width = 6,
@@ -61,5 +68,15 @@ dashboardPage(
       title = "Age Class Distribution", width = 6,
       plotlyOutput("ageclass_dist"))
     )
-    )
+    ),
+  tabItem(
+    tabName = "second_page",
+    fluidRow(
+      box(
+        title = "Second Page", 
+        status = "info", 
+        width = 12,
+        "This is the second page. Content will be added here later.")))
   )
+  )
+)
